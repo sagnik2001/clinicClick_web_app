@@ -1,0 +1,141 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Signika+Negative:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amaranth&display=swap"); */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+html {
+    --white: #fff;
+    --black: #000;
+    --grey: #999;
+    --primary: #07f;
+    --dark-blue: #2f0182;
+    --blue-600: #00002c;
+    --light-blue: #d8eaff;
+    --green: #5cbe79;
+    --danger: #e03131;
+    --danger-100: #f50000;
+    --grey-100: #fafafa;
+    --grey-200: #e7e7e7;
+    --grey-300: #a2a2a2;
+    --grey-400: #4d4d4d;
+    --grey-500: #2f2f2f;
+    --grey-600: #121212;
+    --purple-100: #c995f8;
+    --purple-600: #b08bbb;
+  }
+
+body,html {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  height: 100%;
+}
+#root{
+  background-color: black;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+a {
+  text-decoration: none !important;
+  color: #845ec2 !important;
+}
+
+.form-control-lg {
+  min-height: calc(1.8em + 1rem + 2px) !important;
+}
+
+.map-container {
+  height: 100vh;
+}
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  background-color: #fefedf !important;
+  border-radius: 15px !important;
+}
+
+@media screen and (max-width: 600px) {
+  .mobile {
+    display: block !important;
+  }
+  .mob {
+    margin-top: 2vh !important;
+  }
+}
+
+.content {
+  height: 100vh;
+}
+
+.lato-thin {
+  font-family: "Lato", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.lato-thin-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.lato-light {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.lato-light-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.lato-regular {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.lato-regular-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.lato-bold {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lato-bold-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.lato-black {
+  font-family: "Lato", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.lato-black-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
