@@ -38,7 +38,7 @@ export default function AuthContextProvider(props) {
         const { token, user } = res.data;
         localStorage.setItem("token", token);
         setdata(user);
-        history("/doctorDetails");
+        history("/doctorDashboard");
         toast.success("Logged In successfully!!");
       })
       .catch((err) => {

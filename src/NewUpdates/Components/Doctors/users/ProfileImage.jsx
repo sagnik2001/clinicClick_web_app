@@ -18,6 +18,7 @@ const ProfileImage = ({ methods, isEditing }) => {
     }
   };
 
+
   return (
     <Box className="w-full flex flex-col gap-[54px] p-[20px]">
       <Box className="w-full">

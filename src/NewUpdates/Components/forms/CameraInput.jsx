@@ -63,7 +63,7 @@ const CameraInput = ({ name, opened, close }) => {
             >
                 {file ? (
                     <img
-                        src={URL.createObjectURL(file)}
+                        src={file}
                         // imageProps={{
                         //   onLoad: () => URL.revokeObjectURL(URL.createObjectURL(file as unknown as Blob)),
                         // }}

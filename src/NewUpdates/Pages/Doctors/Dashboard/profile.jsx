@@ -22,37 +22,28 @@ const DoctorProfile = () => {
     const { userInfo, isLoading, error } = useFetchDoctorProfile();
     useEffect(() => {
         if (userInfo) {
-            // const createFile = async (url) => {
-            //     const posterFile = await convertUrlToFile(url);
-            //     return posterFile;
-            // };
+
             methods.reset({
                 name: userInfo?.name,
-                city : userInfo?.city,
-                address : userInfo?.address,
+                city: userInfo?.city,
+                address: userInfo?.address,
                 email: userInfo?.email,
-                price : userInfo?.price,
-                desc : userInfo?.desc,
+                price: userInfo?.price,
+                desc: userInfo?.desc,
                 phone: {
                     'countryCode': '+91',
                     'number': userInfo?.phone,
                 },
-                hospital : userInfo?.hospital,
+                hospital: userInfo?.hospital,
+                profile: userInfo?.profilePicture
             });
-            // const _ = () => {
-            //     if (userInfo.data?.profile_image)
-            //         createFile(userInfo.data?.profile_image)
-            //             .then(res => {
-            //                 if (res) methods.setValue('profile', res);
-            //             })
-            //             .catch(e => console.log('Error', e));
-            // };
-            // _();
+
         }
     }, [userInfo]);
-    
-    const handleUpdateProfile = () => {
 
+
+    const handleUpdateProfile = (data) => {
+        console.log(data)
     }
     return (
         <DashboardLayout>
@@ -79,7 +70,7 @@ const DoctorProfile = () => {
                         >
                             <Box className="w-full flex flex-col lg:flex-row gap-6">
                                 <Box className="w-full lg:w-1/4 h-full rounded-[0.5rem] bg-[#131313] bg-opacity-5">
-                                    <ProfileImage isEditing={isEditing} />
+                                    <ProfileImage methods={methods} isEditing={isEditing} />
                                 </Box>
                                 <Box className="w-full lg:w-3/4 h-auto flex flex-col gap-6">
                                     <Box className="!rounded-[0.5rem] h-full bg-[#131313] bg-opacity-5">
@@ -120,6 +111,7 @@ const DoctorProfile = () => {
                                         <Button
                                             color="custom"
                                             buttonClass="px-[24px] py-[8px] lg:px-[48px] lg:py-[16px] bg-blue-500 text-white rounded-[53px] border border-solid border-blue-500 outline-none"
+                                            disabled={!methods.formState.isDirty || !methods.formState.isValid}
                                         >
                                             <Box className="font-roboto font-normal  text-[16px] -tracking-[0.02em] flex flex-row gap-2 items-center justify-center">
                                                 <FontAwesomeIcon icon={faCircleCheck} color="white" />

@@ -83,17 +83,17 @@ const DocDashboard = () => {
                             'w-[108px]  relative aspect-square flex items-center justify-center rounded-full overflow-hidden'
 
                         >
-                            {/* {userProfile ? (
+                            {userInfo?.profilePicture ? (
                                 <img
-                                    src={URL.createObjectURL(userProfile)}
+                                    src={userInfo?.profilePicture}
                                     width={108}
                                     height={108}
                                     className="w-auto h-full object-cover"
                                     alt="file"
                                 />
-                            ) : ( */}
-                            <img src={UserProfile} alt="UserContainer" width={108} height={108} className="w-auto h-full object-cover" />
-                            {/* )} */}
+                            ) : (
+                                <img src={UserProfile} alt="UserContainer" width={108} height={108} className="w-auto h-full object-cover" />
+                            )}
                         </Box>
                     </Box>
                 </Box>

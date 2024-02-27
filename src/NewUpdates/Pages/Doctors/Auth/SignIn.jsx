@@ -15,13 +15,15 @@ import { Link } from "react-router-dom";
 
 const SignInPage = () => {
 
-    const { isMobileDevice } = useAuth()
+    const { isMobileDevice, Doctor_login } = useAuth()
     const methods = useForm({
         mode: 'onTouched',
     });
 
     const handleSignIn = (data) => {
         console.log(data)
+
+        Doctor_login(data);
     }
 
     return (
