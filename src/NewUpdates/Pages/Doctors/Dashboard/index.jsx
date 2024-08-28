@@ -124,7 +124,7 @@ const DocDashboard = () => {
                                         Daily Appointments
                                     </Button>
                                 </Link>
-                                <Link href="/dashboard/organizations/create">
+                                <Link to="/doctorPatients">
                                     <Button
                                         color="custom"
                                         type="button"

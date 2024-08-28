@@ -4,7 +4,7 @@ import axios from "axios";
 import { checkIfTokenIsExpired } from "../utils";
 import { useDoctorInfo } from "../../../Context/DoctorInfoContext";
 
-export const useFetchDoctorProfile = () => {
+export const usePatientDetails = (endPoint) => {
     const { handleRefreshToken } = useDoctorInfo();
 
     const [userInfo, setUserInfo] = useState();
@@ -24,7 +24,7 @@ export const useFetchDoctorProfile = () => {
             const fetchUserInfo = async () => {
                 setIsLoading(true);
                 try {
-                    const data = await axios.get(`${api_url}doc/getInfo/`, {
+                    const data = await axios.get(`${api_url}${endPoint}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (data.status !== 200) {
@@ -47,5 +47,3 @@ export const useFetchDoctorProfile = () => {
 
     return { userInfo, isLoading, error };
 };
-
-

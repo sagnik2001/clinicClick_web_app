@@ -39,6 +39,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Chatting from "./Patients Components/PatientChats/Chatting";
 import SignInPage from "./NewUpdates/Pages/Doctors/Auth/SignIn.jsx";
 import RegisterPage from "./NewUpdates/Pages/Doctors/Auth/Register.jsx";
+import PatientDetails from "./NewUpdates/Pages/Doctors/Dashboard/patients.jsx";
+import PatientDetailed from "./NewUpdates/Pages/Doctors/Dashboard/patient-details.jsx";
 
 const App = () => {
   const token = window.localStorage.getItem("token");
@@ -77,7 +79,7 @@ const App = () => {
           <Routes>
             {/* //For Doctors */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/home" element={<Home/>} />
+            <Route path="/home" element={<Home />} />
             <Route path="/doctorRegister" element={<RegisterPage />} />
             <Route path="/doctorlogin" element={<SignInPage />} />
             <Route path="/forgetPassword" element={<ForgetPass />} />
@@ -89,7 +91,7 @@ const App = () => {
               path="/doctorDetails"
               element={
                 <ProtectedRoute>
-                  <DoctorProfile/>
+                  <DoctorProfile />
                 </ProtectedRoute>
               }
             />
@@ -97,7 +99,15 @@ const App = () => {
               path="/doctorDashboard"
               element={
                 <ProtectedRoute>
-                  <DocDashboard/>
+                  <DocDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/doctorPatients"
+              element={
+                <ProtectedRoute>
+                  <PatientDetails />
                 </ProtectedRoute>
               }
             />
@@ -159,7 +169,7 @@ const App = () => {
               path="/patientdetails/:id"
               element={
                 <ProtectedRoute>
-                  <PatientDetail />
+                  <PatientDetailed />
                 </ProtectedRoute>
               }
             />
