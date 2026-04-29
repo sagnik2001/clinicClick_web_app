@@ -6,19 +6,19 @@ import { useDisclosure } from '@mantine/hooks';
 
 
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme, params) => ({
     root: {
         position: 'relative',
-        border: '1px solid var(--grey-300)',
-        background: '#2F0182',
-        borderRadius: '39px',
+        border: params.background === 'light' ? '1px solid var(--care-line)' : '1px solid var(--grey-300)',
+        background: params.background === 'light' ? 'var(--white)' : '#2F0182',
+        borderRadius: params.background === 'light' ? '8px' : '39px',
     },
     label: {
         position: 'absolute',
         zIndex: 2,
         top: -30,
         pointerEvents: 'none',
-        color: theme.white,
+        color: params.background === 'light' ? 'var(--care-ink)' : theme.white,
         fontSize: '14px',
         fontWeight: 400,
         marginLeft: '10px',
@@ -26,17 +26,17 @@ const useStyles = createStyles(theme => ({
     required: {
         transition: 'opacity 150ms ease',
         opacity: 1,
-        color: theme.white,
+        color: params.background === 'light' ? 'var(--care-ink)' : theme.white,
     },
 
     input: {
         backgroundColor: 'transparent',
         fontSize: '14px',
-        color: 'white !important' ,
+        color: params.background === 'light' ? 'var(--care-ink) !important' : 'white !important' ,
         fontWeight: 400,
         boxShadow: 'none',
-        border: `1px solid  'var(--grey-300)'`,
-        borderRadius: '39px',
+        border: params.background === 'light' ? '1px solid var(--care-line)' : `1px solid  'var(--grey-300)'`,
+        borderRadius: params.background === 'light' ? '8px' : '39px',
         paddingLeft: theme.spacing.sm,
         paddingRight: theme.spacing.sm,
         outline: 'none',
@@ -51,7 +51,7 @@ const useStyles = createStyles(theme => ({
     innerInput: {
         backgroundColor: 'transparent',
         fontSize: '14px',
-        color:  theme.white ,
+        color: params.background === 'light' ? 'var(--care-ink)' : theme.white ,
         fontWeight: 400,
         boxShadow: 'none',
         paddingLeft: theme.spacing.sm,
@@ -60,7 +60,7 @@ const useStyles = createStyles(theme => ({
         height: 65,
 
         '&::placeholder': {
-            color: '#fff',
+            color: params.background === 'light' ? 'var(--care-muted)' : '#fff',
             transition: 'color 150ms ease',
             opacity: 0.7,
         },
@@ -86,7 +86,7 @@ const useStyles = createStyles(theme => ({
 
 const PasswordInput = ({ ...props }, ref) => {
     const methods = useFormContext();
-    const { classes } = useStyles();
+    const { classes } = useStyles({ background: props.background });
 
     const [visible, { toggle }] = useDisclosure(false);
 

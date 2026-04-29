@@ -1,52 +1,45 @@
-import React from "react";
-import { useState, useEffect, useRef } from "react";
-import NavbarAll from "../Navbar/Navbar";
-import "./chat.css";
-import Conversations from "./Conversations/Conversations";
-
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { api_url } from "../../Urls/Api";
-import appli from "../../Database/Firebase";
-import { AiOutlineCamera } from "react-icons/ai";
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import {
-  collection,
-  query,
-  onSnapshot,
   addDoc,
-  Timestamp,
-  orderBy,
-  setDoc,
+  collection,
   doc,
   getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Moment from "react-moment";
+import { FiCamera, FiMessageCircle, FiSend, FiUsers } from "react-icons/fi";
+import DashboardLayout from "../../NewUpdates/Layouts/DashboardLayout";
+import { api_url } from "../../Urls/Api";
+import appli from "../../Database/Firebase";
+import { EmptyState, SkeletonGrid } from "../common/LoadingStates";
+import Conversations from "./Conversations/Conversations";
+import "./chat.css";
 
 const Chat = () => {
   const [conversation, setConversation] = useState([]);
-
-  const token = window.localStorage.getItem("token");
-  var docId;
-  if (token) {
-    docId = JSON.parse(atob(token.split(".")[1]));
-  }
-
-  console.log(docId);
-
-  const [chatStarted, setChatStarted] = useState(false); // A boolean state to check whether a user has initiated a chat
-  const [chatuser, setChatUser] = useState(""); // A state to have the name of the user whom the logged in user is chatting
-  const [chatpic, setChatpic] = useState(""); // A state to have the pic of the user whom the logged in user is chatting
-  const [chatid, setChatid] = useState(null); // A state to have the id of the user whom the logged in user is chatting
-  const [message, setmessage] = useState(""); // To contain the message sent by the user
-  const [convo, setconvo] = useState([]); // To hold the messages retrieved from database
-  const [lastmsg, setlastmsg] = useState([]); // Last Message
-
-  const [loading, setloading] = useState(false);
+  const [contactsLoading, setContactsLoading] = useState(true);
+  const [chatStarted, setChatStarted] = useState(false);
+  const [selectedPeer, setSelectedPeer] = useState(null);
+  const [chatid, setChatid] = useState(null);
+  const [message, setmessage] = useState("");
+  const [convo, setconvo] = useState([]);
   const [img, setImg] = useState("");
   const [previmg, setprevImg] = useState("");
+  const scrollRef = useRef();
+  const unsubscribeRef = useRef(null);
   const db = appli.firestore();
   const storage = appli.storage();
+
+  const token = window.localStorage.getItem("token");
+  const docId = token ? JSON.parse(atob(token.split(".")[1])) : null;
+  const currentUserId = docId?._id;
 
   const handleImage = (e) => {
     if (e.target.files.length !== 0) {
@@ -56,80 +49,66 @@ const Chat = () => {
   };
 
   const initChat = async (user) => {
-    setloading(false);
+    const userId = user?._id || user;
     setChatStarted(true);
-    setChatid(user);
-    const user_uid_1 = docId?._id;
-    const user_uid_2 = user;
-    const id = user_uid_1 + `$` + user_uid_2; // Creating a chat id for the chat room between 2 users docId
+    setSelectedPeer(user);
+    setChatid(userId);
 
-    // Storing the chats in the db
-    const msgsRef = collection(db, "messages", id, "chat");
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+    }
+
+    const roomId = `${currentUserId}$${userId}`;
+    const msgsRef = collection(db, "messages", roomId, "chat");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
 
-    console.log(q);
-
-    onSnapshot(q, (querySnapshot) => {
-      let msgs = [];
-      querySnapshot.forEach((doc) => {
-        msgs.push(doc.data());
+    unsubscribeRef.current = onSnapshot(q, (querySnapshot) => {
+      const msgs = [];
+      querySnapshot.forEach((snapDoc) => {
+        msgs.push(snapDoc.data());
       });
-      setconvo(msgs); // Retrieving the messages between two particular users in same chat id
+      setconvo(msgs);
     });
-    // Last Messages
-    const docSnap = await getDoc(doc(db, "lastmsg", id));
-    // if last message exists and message is from selected user
-    if (docSnap.data() && docSnap.data().from !== user_uid_1) {
-      // update last message doc, set unread to false
-      await updateDoc(doc(db, "lastmsg", id), { unread: false });
+
+    const docSnap = await getDoc(doc(db, "lastmsg", roomId));
+    if (docSnap.data() && docSnap.data().from !== currentUserId) {
+      await updateDoc(doc(db, "lastmsg", roomId), { unread: false });
     }
   };
-
-  console.log(convo);
-  const scrollRef = useRef();
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [convo]);
 
-  // On Sending a Message to a user
+  useEffect(() => () => unsubscribeRef.current?.(), []);
+
   const messageHandler = async (e) => {
     e.preventDefault();
-    if (message || img) {
-      const user_uid_1 = docId?._id;
-      const user_uid_2 = chatid;
-      const id = user_uid_1 + `$` + user_uid_2; // Creating a chat id for the chat room between 2 users docId
+    if (!message && !img) return;
 
-      console.log(id);
-      // If a user sends an image
-      let url;
-      if (img) {
-        const imgRef = ref(
-          storage, // Storing the image url in firebase storage
-          `images/${new Date().getTime()} - ${img.name}`,
-        );
-        const snap = await uploadBytes(imgRef, img);
-        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
-        url = dlUrl;
-      }
+    const roomId = `${currentUserId}$${chatid}`;
+    let url;
 
-      // Firestore database
-      await addDoc(collection(db, "messages", id, "chat"), {
-        message,
-        from: user_uid_1,
-        to: user_uid_2,
-        createdAt: Timestamp.fromDate(new Date()),
-        media: url || "",
-      });
-      await setDoc(doc(db, "lastmsg", id), {
-        message,
-        from: user_uid_1,
-        to: user_uid_2,
-        createdAt: Timestamp.fromDate(new Date()),
-        media: url || "",
-        unread: true,
-      });
+    if (img) {
+      const imgRef = ref(storage, `images/${new Date().getTime()} - ${img.name}`);
+      const snap = await uploadBytes(imgRef, img);
+      url = await getDownloadURL(ref(storage, snap.ref.fullPath));
     }
+
+    const payload = {
+      message,
+      from: currentUserId,
+      to: chatid,
+      createdAt: Timestamp.fromDate(new Date()),
+      media: url || "",
+    };
+
+    await addDoc(collection(db, "messages", roomId, "chat"), payload);
+    await setDoc(doc(db, "lastmsg", roomId), {
+      ...payload,
+      unread: true,
+    });
+
     setmessage("");
     setImg("");
     setprevImg("");
@@ -143,144 +122,146 @@ const Chat = () => {
         },
       })
       .then((res) => {
-        setConversation(res.data);
+        setConversation(Array.isArray(res.data) ? res.data : []);
       })
       .catch((err) => {
         console.log(err);
-      });
-  }, []);
+      })
+      .finally(() => setContactsLoading(false));
+  }, [token]);
 
   return (
-    <div>
-      <NavbarAll />
-      <div className="messenger">
-        <div className="chatMenu">
-          <div className="chatMenuWrapper chatMenuSideWrapper" style={{ textAlign: "center" }}>
-            {conversation?.map((c) => (
-              <Conversations conversation={c} onClick={initChat} />
-            ))}
-          </div>
+    <DashboardLayout>
+      <section className="care-page-header">
+        <div>
+          <span className="care-kicker">
+            <FiMessageCircle /> Care chat
+          </span>
+          <h1>Patient conversations</h1>
+          <p>Message registered mothers directly from the field-worker console.</p>
         </div>
-        <div className="chatBox">
-          <div className="chatMenuWrapper">
-            {chatStarted && (
+      </section>
+
+      <div className="messenger care-chat-shell">
+        <aside className="chatMenu care-chat-sidebar">
+          <div className="care-chat-sidebar__header">
+            <span className="care-pill">
+              <FiUsers /> Patients
+            </span>
+            <h2>Registered contacts</h2>
+          </div>
+          <div className="care-chat-list">
+            {contactsLoading ? (
+              <SkeletonGrid count={3} />
+            ) : conversation.length > 0 ? (
+              conversation.map((contact) => (
+                <Conversations
+                  conversation={contact}
+                  active={chatid === contact?._id}
+                  onClick={initChat}
+                  key={contact?._id}
+                />
+              ))
+            ) : (
+              <EmptyState
+                title="No patients to message"
+                message="Registered mothers will appear here once records are linked to this worker."
+              />
+            )}
+          </div>
+        </aside>
+
+        <section className="chatBox care-chat-panel">
+          <div className="care-chat-panel__inner">
+            {chatStarted ? (
               <>
-                <div className="chatBoxTop">
-                  <>
-                    {" "}
-                    {convo?.map((con) => (
+                <div className="care-chat-panel__header">
+                  <span className="care-chat-contact__avatar care-chat-contact__avatar--large">
+                    {selectedPeer?.name?.charAt(0)?.toUpperCase() || "M"}
+                  </span>
+                  <div>
+                    <h2>{selectedPeer?.name || "Mother record"}</h2>
+                    <p>{selectedPeer?.phone || selectedPeer?.email || "Patient conversation"}</p>
+                  </div>
+                </div>
+
+                <div className="chatBoxTop care-chat-messages">
+                  {convo.map((item, index) => {
+                    const isMine = item.from === currentUserId;
+                    return (
                       <div
-                        style={{
-                          marginTop: "2vh",
-                          textAlign: con.from == docId?._id ? "right" : "left",
-                        }}
+                        className={`care-chat-message-row ${
+                          isMine ? "care-chat-message-row--mine" : ""
+                        }`}
                         ref={scrollRef}
+                        key={`${item.createdAt?.seconds || index}-${index}`}
                       >
-                        {con?.media && (
+                        {item?.media && (
                           <p
-                            className={
-                              con.from == docId?._id
-                                ? "messageStyle1"
-                                : "messageStyle"
-                            }
+                            className={`care-chat-bubble ${
+                              isMine ? "care-chat-bubble--mine" : ""
+                            }`}
                           >
-                            {con.media ? (
-                              <img
-                                src={con.media}
-                                alt={con.message}
-                                width="120"
-                                height="131"
-                                style={{
-                                  textAlign: "center",
-                                  filter:
-                                    "drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.161))",
-                                }}
-                              />
-                            ) : null}
+                            <img src={item.media} alt={item.message || "Attachment"} />
                           </p>
                         )}
-                        {con?.message && (
+                        {item?.message && (
                           <p
-                            className={
-                              con.from == docId?._id
-                                ? "messageStyle1"
-                                : "messageStyle"
-                            }
+                            className={`care-chat-bubble ${
+                              isMine ? "care-chat-bubble--mine" : ""
+                            }`}
                           >
-                            {con.message}
+                            {item.message}
                           </p>
                         )}
-                        <br />
-                        <small
-                          className={con.from == docId?._id ? "date1" : "date"}
-                        >
-                          <Moment fromNow>{con.createdAt.toDate()}</Moment>
+                        <small className="care-chat-date">
+                          {item.createdAt?.toDate ? (
+                            <Moment fromNow>{item.createdAt.toDate()}</Moment>
+                          ) : null}
                         </small>
                       </div>
-                    ))}
-                  </>
+                    );
+                  })}
                 </div>
-                <div className="chatBoxBottom">
-                  <form
-                    style={{
-                      display: "flex",
-                      width: "100%",
-                      alignItems: "center",
-                    }}
-                    onSubmit={messageHandler}
-                  >
-                    <div style={{ marginLeft: "2vw" }}>
-                      <label htmlFor="img">
-                        {previmg ? (
-                          <img
-                            src={previmg}
-                            alt="dummy"
-                            width="49"
-                            height="51
-          "
-                            style={{
-                              borderRadius: "75px",
 
-                              filter:
-                                "drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.161))",
-                            }}
-                          />
-                        ) : (
-                          <AiOutlineCamera />
-                        )}
-                      </label>
-
-                      <input
-                        onChange={(e) => handleImage(e)}
-                        type="file"
-                        id="img"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                      />
-                    </div>
+                <div className="chatBoxBottom care-chat-composer">
+                  <form onSubmit={messageHandler}>
+                    <label htmlFor="doctor-chat-img" className="care-chat-upload">
+                      {previmg ? (
+                        <img src={previmg} alt="Selected attachment preview" />
+                      ) : (
+                        <FiCamera />
+                      )}
+                    </label>
+                    <input
+                      onChange={handleImage}
+                      type="file"
+                      id="doctor-chat-img"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                    />
                     <textarea
-                      className=" chatMessageInput"
-                      type="text"
-                      style={{
-                        width: "100%",
-                        textDecoration: "auto",
-                        border: "#55A039",
-                      }}
+                      className="chatMessageInput"
                       value={message}
                       onChange={(e) => setmessage(e.target.value)}
-                      placeholder="Start typing....."
-                    ></textarea>
-                    <button className="chatSubmitButton">Send</button>
+                      placeholder="Write a message..."
+                    />
+                    <button className="chatSubmitButton" type="submit">
+                      <FiSend /> Send
+                    </button>
                   </form>
                 </div>
               </>
+            ) : (
+              <EmptyState
+                title="Select a patient to start chatting"
+                message="Choose a registered mother from the left panel to open the conversation thread."
+              />
             )}
-            {/*
-             */}
           </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

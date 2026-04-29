@@ -1,3 +1,5 @@
-.patient-welcome {
-  margin-top: 100px;
+.patient-profile-setup__image {
+  object-fit: contain;
+  padding: 28px;
+  background: linear-gradient(135deg, #fff8ee, #e9f7ef);
 }

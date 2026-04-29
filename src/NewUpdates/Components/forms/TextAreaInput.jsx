@@ -10,16 +10,16 @@ const TextAreaInput = ({ ...props }, ref) => {
   const useStyles = createStyles(theme => ({
     root: {
       position: 'relative',
-      boxShadow: 'inset 0 0 0 1px #FFFFFF80',
-      background: props.background ?? 'var(--dark-blue)',
-      borderRadius: '12px',
+      boxShadow: props.background === 'light' ? 'inset 0 0 0 1px var(--care-line)' : 'inset 0 0 0 1px #FFFFFF80',
+      background: props.background === 'light' ? 'var(--white)' : props.background ?? 'var(--dark-blue)',
+      borderRadius: props.background === 'light' ? '8px' : '12px',
     },
     label: {
       position: 'absolute',
       zIndex: 2,
       top: -30,
       pointerEvents: 'none',
-      color: 'var(--white)',
+      color: props.background === 'light' ? 'var(--care-ink)' : 'var(--white)',
       fontSize: '1rem',
       fontWeight: 400,
       marginLeft: '10px',
@@ -27,17 +27,17 @@ const TextAreaInput = ({ ...props }, ref) => {
     required: {
       transition: 'opacity 150ms ease',
       opacity: 1,
-      color: 'var(--white)',
+      color: props.background === 'light' ? 'var(--care-ink)' : 'var(--white)',
     },
 
     input: {
       backgroundColor: 'transparent',
       fontSize: '16px',
-      color: 'var(--white)',
+      color: props.background === 'light' ? 'var(--care-ink)' : 'var(--white)',
       fontWeight: 400,
-      boxShadow: 'inset 0 0 0 1px #FFFFFF80',
-      border: 'none',
-      borderRadius: '12px',
+      boxShadow: props.background === 'light' ? 'inset 0 0 0 1px var(--care-line)' : 'inset 0 0 0 1px #FFFFFF80',
+      border: props.background === 'light' ? '1px solid var(--care-line)' : 'none',
+      borderRadius: props.background === 'light' ? '8px' : '12px',
       paddingLeft: theme.spacing.sm,
       paddingRight: theme.spacing.sm,
       outline: 'none',
@@ -45,24 +45,24 @@ const TextAreaInput = ({ ...props }, ref) => {
       height: 65,
 
       '&::placeholder': {
-        color: '#FFFFFF80',
+        color: props.background === 'light' ? 'var(--care-muted)' : '#FFFFFF80',
       },
 
       '&:focus, &:focus-within': {
         outline: 'none',
         border: 'none',
-        boxShadow: 'inset 0 0 0 1px #FFFFFF80',
+        boxShadow: props.background === 'light' ? 'inset 0 0 0 1px var(--care-teal)' : 'inset 0 0 0 1px #FFFFFF80',
       },
     },
     innerInput: {
       fontSize: '20px',
-      color: 'var(--white)',
+      color: props.background === 'light' ? 'var(--care-ink)' : 'var(--white)',
       fontWeight: 500,
       opacity: 0.7,
       padding: 0,
 
       '&::placeholder': {
-        color: '#FFFFFF80',
+        color: props.background === 'light' ? 'var(--care-muted)' : '#FFFFFF80',
         transition: 'color 150ms ease',
         fontSize: '14px',
       },

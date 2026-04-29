@@ -11,7 +11,7 @@ const PhoneInput = ({ ...props }, ref) => {
   const useStyles = createStyles(theme => ({
     root: {
       position: 'relative',
-      borderRadius: '39px',
+      borderRadius: props.background === 'light' ? '8px' : '39px',
     },
     label: {
       position: 'absolute',
@@ -37,7 +37,7 @@ const PhoneInput = ({ ...props }, ref) => {
       color: props.background === 'light' ? 'var(--black)' : 'var(--white)',
       fontWeight: 400,
       border: props.background === 'light' ? '1px solid black' : 'none',
-      borderRadius: '39px',
+      borderRadius: props.background === 'light' ? '8px' : '39px',
       paddingLeft: theme.spacing.sm,
       paddingRight: theme.spacing.sm,
       outline: 'none',

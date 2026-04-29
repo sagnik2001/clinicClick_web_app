@@ -1,10 +1,11 @@
+.doctors-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
 .buttonBook {
-  margin: 10px !important;
-  padding-left: 30px !important;
-  padding-right: 30px !important;
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-  border-radius: 15px !important;
-  border-color: #845ec2 !important;
-  color: #845ec2 !important;
+  border-color: var(--care-teal) !important;
+  color: var(--care-teal) !important;
 }

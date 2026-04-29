@@ -13,7 +13,7 @@ const TextInput = ({ ...props },ref) => {
       position: 'relative',
       boxShadow: 'inset 0 0 0 1px #FFFFFF80',
       background: props.background === 'light' ? 'var(--white)' : 'var(--dark-blue)',
-      borderRadius: '39px',
+      borderRadius: props.background === 'light' ? '8px' : '39px',
     },
     label: {
       position: 'absolute',
@@ -38,7 +38,7 @@ const TextInput = ({ ...props },ref) => {
       fontWeight: 400,
       boxShadow: 'inset 0 0 0 1px #FFFFFF80',
       border: props.background === 'light' ? '1px solid black' : 'none',
-      borderRadius: '39px',
+      borderRadius: props.background === 'light' ? '8px' : '39px',
       paddingLeft: theme.spacing.sm,
       paddingRight: theme.spacing.sm,
       outline: 'none',

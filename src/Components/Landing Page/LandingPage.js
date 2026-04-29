@@ -1,95 +1,180 @@
 import React from "react";
-import NavbarAll from "../Navbar/Navbar";
-import "./LandingPage.css";
-import landingImage from "../assets/landing.svg";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/esm/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBedPulse } from "@fortawesome/free-solid-svg-icons";
-import { Box } from "@mantine/core";
+import {
+  FiArrowRight,
+  FiBell,
+  FiCalendar,
+  FiCheckCircle,
+  FiClipboard,
+  FiHeart,
+  FiSmartphone,
+  FiUsers,
+} from "react-icons/fi";
+import { PublicNav } from "../common/CareShell";
+import heroImage from "../assets/homepage.jpg";
+import milestoneImage from "../assets/img.jpg";
+import "./LandingPage.css";
+
+const workflowCards = [
+  {
+    icon: <FiUsers />,
+    title: "Register mothers in the field",
+    copy: "Health workers can capture patient records, contact details, trimester status, location, and care notes during village visits.",
+  },
+  {
+    icon: <FiClipboard />,
+    title: "Log every checkup visit",
+    copy: "Each appointment and checkup becomes a trackable record, so NGO staff can see who was seen, what changed, and what is pending.",
+  },
+  {
+    icon: <FiBell />,
+    title: "Trigger appointment reminders",
+    copy: "Upcoming visits stay visible for workers, reducing missed ANC follow-ups and making the next action clear.",
+  },
+];
+
+const validationNotes = [
+  "Presented to Mamta HMIC staff as a working POC.",
+  "Validated by the NGO as a useful reference for their production system.",
+  "Iterated directly from field-worker feedback, not only classroom assumptions.",
+];
 
 const LandingPage = () => {
   return (
-    <Box className="relative w-screen h-screen bg-no-repeat bg-fixed bg-cover overflow-y-scroll overflow-x-hidden">
-      <Box className="absolute w-screen h-screen bg-dashboard-gradient-1 -top-[17.3%] -left-[22%] rotate-[15deg]" />
-      <Box className="absolute w-screen h-screen bg-dashboard-gradient-2 top-[17.3%] left-[22%] rotate-[15deg]" />
-      <Box className="py-[3rem] px-[2rem] md:py-[4.5rem] md:px-[4.5rem] absolute top-12 w-full">
-        <div className="landing-section">
-          <Container>
-            <Row>
-              <Col>
-                <h1>Serving Your Health is our First Priority.</h1>
-                <Link to="/home">
-                  <button className="landing-button">Get Started</button>
-                </Link>
-              </Col>
-              <Col>
-                <img src={landingImage} />
-              </Col>
-            </Row>
-          </Container>
-        </div>
-        <div className="services-section">
-          <h1>Health Services for You</h1>
-          <p>We are always here to listening and understandings</p>
-          <div className="services-cards">
-            <Container>
-              <Row>
-                <Col className="coloumn_cards">
-                  <Card>
-                    <FontAwesomeIcon
-                      icon={faBedPulse}
-                      className="services-icon"
-                    />
-                    <Card.Body>
-                      <Card.Title>01</Card.Title>
-                      <Card.Text>
-                        Some quick example text to build on the card title and
-                        make up the bulk of the card's content.
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col className="coloumn_cards">
-                  <Card>
-                    <FontAwesomeIcon
-                      icon={faBedPulse}
-                      className="services-icon"
-                    />
-                    <Card.Body>
-                      <Card.Title>02</Card.Title>
-                      <Card.Text>
-                        Some quick example text to build on the card title and
-                        make up the bulk of the card's content.
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col className="coloumn_cards">
-                  <Card>
-                    <FontAwesomeIcon
-                      icon={faBedPulse}
-                      className="services-icon"
-                    />
-                    <Card.Body>
-                      <Card.Title>03</Card.Title>
-                      <Card.Text>
-                        Some quick example text to build on the card title and
-                        make up the bulk of the card's content.
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </Container>
+    <main className="care-page ngo-landing">
+      <PublicNav />
+
+      <section
+        className="care-hero ngo-landing__hero"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
+        <div className="care-container">
+          <div className="care-hero__content">
+            <span className="care-kicker">
+              <FiHeart /> NGO maternal health POC
+            </span>
+            <h1>Mamta HMIC maternal care platform</h1>
+            <p className="care-hero__lead">
+              A working proof of concept for local NGO field teams: health
+              workers register patients, log checkup visits, track upcoming
+              appointments, and mothers receive week-by-week pregnancy milestone
+              updates.
+            </p>
+            <div className="care-hero__actions">
+              <Link to="/home" className="care-btn care-btn--primary">
+                Open portals <FiArrowRight />
+              </Link>
+              <Link to="/doctorlogin" className="care-btn care-btn--ghost">
+                Health worker sign in
+              </Link>
+            </div>
           </div>
         </div>
-      </Box>
-    </Box>
+
+        <div className="care-hero__strip">
+          <div className="care-hero__stat">
+            <strong>Register</strong>
+            <span>Mother profiles</span>
+          </div>
+          <div className="care-hero__stat">
+            <strong>Log</strong>
+            <span>Checkup visits</span>
+          </div>
+          <div className="care-hero__stat">
+            <strong>Remind</strong>
+            <span>Upcoming appointments</span>
+          </div>
+          <div className="care-hero__stat">
+            <strong>Update</strong>
+            <span>Weekly milestones</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="care-section">
+        <div className="care-container">
+          <div className="care-section__header">
+            <div>
+              <span className="care-kicker">Field workflow</span>
+              <h2 className="care-section__title">Built around NGO staff work</h2>
+            </div>
+            <p className="care-section__copy">
+              The POC focuses on the practical loop Mamta HMIC needed to test:
+              identify the mother, record the visit, schedule the next follow-up,
+              and keep the family informed.
+            </p>
+          </div>
+
+          <div className="care-grid care-grid--3">
+            {workflowCards.map((item) => (
+              <article className="care-card" key={item.title}>
+                <div className="care-card__icon">{item.icon}</div>
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="care-section care-section--tight">
+        <div className="care-container care-split">
+          <div>
+            <span className="care-kicker">
+              <FiSmartphone /> Mother support
+            </span>
+            <h2 className="care-section__title">
+              Week-by-week milestone updates for expectant mothers
+            </h2>
+            <p className="care-section__copy">
+              Mothers get a calmer dashboard for appointment status, trimester
+              details, and practical milestone guidance. The worker side keeps
+              the same record visible to the care team.
+            </p>
+            <div className="ngo-validation-list">
+              {validationNotes.map((note) => (
+                <div className="ngo-validation-list__item" key={note}>
+                  <FiCheckCircle />
+                  <span>{note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="care-photo-panel">
+            <img src={milestoneImage} alt="Pregnancy nutrition milestone guidance" />
+            <div className="care-photo-panel__caption">
+              <strong>Care content can live beside clinical follow-ups.</strong>
+              <span>
+                The product reference combines operational tracking with mother
+                education and appointment continuity.
+              </span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section className="care-section">
+        <div className="care-container">
+          <div className="ngo-proof-panel">
+            <div>
+              <span className="care-kicker">
+                <FiCalendar /> Iterative delivery
+              </span>
+              <h2>Owned the build and shipped from direct feedback</h2>
+              <p>
+                The POC was delivered as a working product reference, then
+                refined around feedback from NGO staff who understood the field
+                workflow and the production system they wanted to build.
+              </p>
+            </div>
+            <Link to="/home" className="care-btn care-btn--primary">
+              Choose a portal <FiArrowRight />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 };
 

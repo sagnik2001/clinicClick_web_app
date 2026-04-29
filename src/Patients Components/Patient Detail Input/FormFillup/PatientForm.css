@@ -1,48 +1,71 @@
-.trimester-col {
+.patient-form-modern {
+  width: 100%;
+}
+
+.patient-form-modern__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.patient-form-modern label {
+  display: grid;
+  gap: 8px;
+  color: var(--care-ink);
+  font-weight: 900;
+}
+
+.patient-form-modern label span {
+  color: var(--care-muted);
+  font-size: 0.88rem;
+}
+
+.patient-form-modern__wide {
+  grid-column: 1 / -1;
+}
+
+.patient-form-modern__textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.patient-form-modern__actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
 }
 
-.trimester-dropdown {
-  width: 50%;
-  margin-left: -120px;
+.patient-form-modern__actions .care-btn {
+  min-width: 190px;
+  min-height: 54px;
+  padding: 12px 18px;
+  font-size: 1rem;
 }
 
-.trimester-text {
-  width: 50%;
+.patient-form-modern__actions .care-btn--primary {
+  background: var(--care-teal) !important;
+  border-color: var(--care-teal) !important;
+  color: #ffffff !important;
 }
 
-.form-part-two .patient-colsm2 {
-  padding-left: 15%;
+.patient-form-modern__actions .care-btn--secondary {
+  background: #ffffff !important;
+  border-color: var(--care-line) !important;
+  color: var(--care-ink) !important;
 }
 
-.form-part-three {
-  text-align: center;
-}
-
-.country {
-  display: block !important;
-}
-
-@media screen and (max-width: 800px) {
-  .trimester-col {
-    display: block;
+@media (max-width: 760px) {
+  .patient-form-modern__grid {
+    grid-template-columns: 1fr;
   }
 
-  .trimester-dropdown {
+  .patient-form-modern__actions {
+    justify-content: stretch;
+  }
+
+  .patient-form-modern__actions .care-btn {
     width: 100%;
-    margin-left: 0px;
-  }
-
-  .trimester-text {
-    width: 100%;
-  }
-
-  .form-part-two .patient-colsm2 {
-    padding-left: 7%;
-  }
-
-  .submit-button {
-    width: 140px;
   }
 }

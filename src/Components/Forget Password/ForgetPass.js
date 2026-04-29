@@ -1,15 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import image3 from "../assets/Forget_pass.svg";
+import { PublicNav } from "../common/CareShell";
 import "./forgetPass.css";
 
 const ForgetPass = () => {
   return (
-    <div className="register">
+    <main className="care-auth-page">
+      <PublicNav />
+      <section className="care-legacy-auth">
       <div className="register-box">
         <div className="register-row">
           <div className="register-col1">
-            <img src={image3} className="login-img" />
+            <img src={image3} className="login-img" alt="Password reset" />
+            <h1 className="doctor-text">Recover access</h1>
           </div>
           <div className="register-col2">
             <div className="register-form-part">
@@ -26,7 +30,8 @@ const ForgetPass = () => {
           </div>
         </div>
       </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

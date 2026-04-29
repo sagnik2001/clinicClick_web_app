@@ -13,13 +13,14 @@ import TextAreaInput from '../../forms/TextAreaInput';
 const PersonalDetails = ({ methods, isEditing }) => (
     <Box className="w-full flex flex-col gap-[54px] p-[20px]">
         <Box>
-            <h4 className="text-lg font-lato text-white">Personal Information</h4>
+            <h4 className="text-lg font-lato text-[--care-ink]">Personal Information</h4>
         </Box>
         <Box className="flex flex-col lg:flex-row gap-[54px] lg:gap-6">
             <TextInput
                 {...methods.register('name')}
                 label="Name"
                 placeholder="Enter Name"
+                background="light"
                 disabled={!isEditing}
                 required
                 
@@ -28,12 +29,14 @@ const PersonalDetails = ({ methods, isEditing }) => (
                 {...methods.register('city')}
                 label="City"
                 placeholder="Enter City"
+                background="light"
                 disabled={!isEditing}
             />
             <TextInput
                 {...methods.register('price')}
                 label="Price"
                 placeholder="Enter the price you want to show"
+                background="light"
                 required
                 disabled={!isEditing}
             />
@@ -51,6 +54,7 @@ const PersonalDetails = ({ methods, isEditing }) => (
                 {...methods.register('hospital')}
                 label="Hospital"
                 placeholder="Enter hospital"
+                background="light"
                 required
                 disabled={!isEditing}
             />
@@ -60,6 +64,7 @@ const PersonalDetails = ({ methods, isEditing }) => (
                 type="email"
                 label="Email Address"
                 placeholder="Enter email id"
+                background="light"
                 required
                 disabled={!isEditing}
             />
@@ -70,6 +75,7 @@ const PersonalDetails = ({ methods, isEditing }) => (
                     {...methods.register('phone')}
                     label="Enter Phone Number"
                     placeholder="Enter phone number"
+                    background="light"
                     required
                     disabled={!isEditing}
                 />
@@ -82,7 +88,7 @@ const PersonalDetails = ({ methods, isEditing }) => (
                 label="Enter Address"
                 minRows={2}
                 placeholder="Enter Address"
-                background="#FFFFFF80"
+                background="light"
             />
         </Box>
         <Box className="flex flex-col lg:flex-row gap-[54px] lg:gap-6">
@@ -91,7 +97,7 @@ const PersonalDetails = ({ methods, isEditing }) => (
                 label="A little bit about yourself"
                 minRows={2}
                 placeholder="This will be displayed in your profile"
-                background="#FFFFFF80"
+                background="light"
             />
         </Box>
 

@@ -8,7 +8,7 @@ import "./PatientLogin.css";
 import Alert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
-import { parseJwt } from "../../App";
+import { PublicNav } from "../../Components/common/CareShell";
 
 const PatientLogin = () => {
   const { Patient_login } = useAuth();
@@ -78,16 +78,22 @@ const PatientLogin = () => {
   };
 
   return (
-    <div>
-      <div className="register">
+    <main className="care-auth-page">
+      <PublicNav />
+      <section className="care-legacy-auth">
         <div className="register-box">
           <div className="register-row">
             <div className="register-col1">
-              <img src={image2} className="login-img" />
+              <img src={image2} className="login-img" alt="Mother login" />
+              <h1 className="doctor-text">Mother dashboard</h1>
+              <p className="care-auth-card__copy" style={{ color: "rgba(255,255,255,0.82)", textAlign: "center" }}>
+                Continue to appointment status, milestone guidance, and care
+                details shared by the health worker.
+              </p>
             </div>
             <div className="register-col2">
               <div className="register-form-part">
-                <h1 className="login-text">Login to your Account</h1>
+                <h1 className="login-text">Mother sign in</h1>
                 <form className="register-form" onSubmit={handleSubmit}>
                   <input
                     placeholder="Email Address"
@@ -152,8 +158,8 @@ const PatientLogin = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

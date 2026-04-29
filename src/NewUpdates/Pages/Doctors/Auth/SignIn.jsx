@@ -1,142 +1,92 @@
 import React from "react";
-import AuthLayout from "../../../Layouts/AuthLayout";
-import { Box } from "@mantine/core";
-import classNames from 'classnames';
-import PedractianImage from "../../../../Components/assets/Doctor_login.svg"
-import { useAuth } from "../../../../Context/AuthContext";
-import DividerImg from "../../../../Components/assets/divider.svg"
-import LogoImg from "../../../../Components/assets/logo.png"
 import { FormProvider, useForm } from "react-hook-form";
-import Button from "../../../Components/common/Button";
+import { Link } from "react-router-dom";
+import { FiCheckCircle, FiLock, FiUsers } from "react-icons/fi";
+import { useAuth } from "../../../../Context/AuthContext";
+import workerImage from "../../../../Components/assets/Doctor_login.svg";
+import { PublicNav } from "../../../../Components/common/CareShell";
 import TextInput from "../../../Components/forms/TextInput";
 import PasswordInput from "../../../Components/forms/PasswordInput";
-import { Link } from "react-router-dom";
-
 
 const SignInPage = () => {
+  const { Doctor_login } = useAuth();
+  const methods = useForm({
+    mode: "onTouched",
+  });
 
-    const { isMobileDevice, Doctor_login } = useAuth()
-    const methods = useForm({
-        mode: 'onTouched',
-    });
+  const handleSignIn = (data) => {
+    Doctor_login(data);
+  };
 
-    const handleSignIn = (data) => {
-        console.log(data)
+  return (
+    <main className="care-auth-page">
+      <PublicNav />
+      <section className="care-container care-auth-layout">
+        <aside className="care-auth-visual">
+          <div>
+            <span className="care-kicker">
+              <FiLock /> Worker access
+            </span>
+            <h2>Field records, checkups, and reminders in one console.</h2>
+            <p>
+              Sign in to continue managing mother registrations, visit logs,
+              and upcoming appointment reminders for the Mamta HMIC reference
+              workflow.
+            </p>
+          </div>
+          <img src={workerImage} alt="Health worker accessing patient records" />
+          <div className="care-auth-highlights">
+            <span>
+              <FiUsers /> Patient registry
+            </span>
+            <span>
+              <FiCheckCircle /> Visit follow-up
+            </span>
+          </div>
+        </aside>
 
-        Doctor_login(data);
-    }
+        <section className="care-auth-card">
+          <h1>Health worker sign in</h1>
+          <p className="care-auth-card__copy">
+            Access the protected console used to register patients, review care
+            details, and keep appointments moving.
+          </p>
 
-    return (
-        <AuthLayout>
-            <Box
-                className={classNames(
-                    'h-full flex flex-col lg:flex-row items-center justify-between sm:gap-4 py-8 overflow-hidden',
-                )}
+          <FormProvider {...methods}>
+            <form
+              onSubmit={methods.handleSubmit(handleSignIn)}
+              className="care-auth-form"
             >
-                <Box
-                    className={classNames(
-                        'sm:h-full w-full lg:w-1/2 flex flex-col items-center sm:justify-center',
-                    )}
-                >
-                    {isMobileDevice && (
-                        <Box className="flex flex-col items-center gap-[1rem]">
-                            <Box id="logo-container">
-                                <img
-                                    src={PedractianImage}
-                                    width={isMobileDevice ? 238 : 448}
-                                    height={isMobileDevice ? 74 : 111}
-                                    alt="logo"
-                                />
-                            </Box>
-                            <Box className="w-full flex flex-col gap-[0.7rem] md:gap-[1.12rem]">
-                                <p
-                                    className={classNames(
-                                        'font-roboto font-light text-[1rem] md:text-[1.125rem] text-center text-white',
-                                    )}
-                                >
-                                    All your appointments and patient details inside a
-                                    <br />
-                                    <span className="text-[#663399] italic underline">secured platform</span>
-                                </p>
-                            </Box>
-                        </Box>
-                    )}
-                    {!isMobileDevice && (
-                        <Box id="illustration-container" className="relative w-full h-full max-h-[680px] px-16">
-                            <img
-                                src={PedractianImage}
-                                alt="LandingPic"
-                                layout="fill"
-                                fill
-                                style={{ objectFit: 'contain' }}
-                            />
-                        </Box>
-                    )}
-                </Box>
-                <Box className="hidden lg:block lg:h-max">
-                    <img src={DividerImg} alt="|" width={2} height={500} />
-                </Box>
-                <Box
-                    className={classNames(
-                        'h-full w-full lg:w-1/2 flex flex-col items-center sm:justify-center gap-[4rem]',
-                    )}
-                >
-                    {!isMobileDevice && (
-                        <Box id="logo-container">
-                            <img
-                                src={LogoImg}
-                                width={isMobileDevice ? 238 : 448}
-                                height={isMobileDevice ? 74 : 111}
-                                alt="logo"
-                            />
-                        </Box>
-                    )}
-                    <Box
-                        className={classNames('w-full', {
-                            'px-0 py-[6rem]': isMobileDevice,
-                            'px-28': !isMobileDevice,
-                        })}
-                    >
-                        <FormProvider {...methods}>
-                            <form
-                                onSubmit={methods.handleSubmit(handleSignIn)}
-                                className="w-full flex flex-col gap-[3rem]"
-                            >
-                                <TextInput
-                                    {...methods.register('email')}
-                                    label="Email"
-                                    placeholder="Enter email"
-                                    required
-                                />
-                                <PasswordInput
-                                    {...methods.register('password')}
-                                    label="Password"
-                                    placeholder="Enter password"
-                                    required
-                                />
-                                <Button
-                                    color="custom"
-                                    buttonClass="px-[1.5rem] w-full py-[1rem] bg-purple-100 md:px-[3rem]  md:py-[1.5rem] rounded-[2rem] border-none outline-none"
-                                // isLoading={userSignUp.isLoading}
-                                >
-                                    <Box className="font-roboto font-[500] text-[#02012F] text-[1rem] -tracking-[0.02em]">
-                                        LogIn Your Profile
-                                    </Box>
-                                </Button>
-                            </form>
-                        </FormProvider>
-                    </Box>
-                    <p className="extra-text">
-                        <Link to="/forgetPassword">Forget Password ?</Link>
-                    </p>
-                    <p className="extra-text" style={{ color: 'white' }}>
-                        Don't have an account?
-                        <Link to="/doctorRegister"> Register</Link>
-                    </p>
-                </Box>
-            </Box>
-        </AuthLayout>
-    )
-}
+              <TextInput
+                {...methods.register("email")}
+                label="Email"
+                placeholder="Enter email"
+                background="light"
+                required
+              />
+              <PasswordInput
+                {...methods.register("password")}
+                label="Password"
+                placeholder="Enter password"
+                background="light"
+                required
+              />
+              <button className="care-btn care-btn--primary" type="submit">
+                Sign in to console
+              </button>
+            </form>
+          </FormProvider>
 
-export default SignInPage
+          <div className="care-form-footer">
+            <Link to="/forgetPassword">Forgot password?</Link>
+            <span>
+              New worker? <Link to="/doctorRegister">Create account</Link>
+            </span>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+};
+
+export default SignInPage;

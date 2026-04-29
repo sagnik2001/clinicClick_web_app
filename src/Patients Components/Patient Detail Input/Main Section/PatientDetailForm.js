@@ -1,55 +1,73 @@
 import React from "react";
-import NavbarAll from "../../../Components/Navbar/Navbar";
-import Patient1 from "../../../Components/assets/Patients1.svg";
-import Patient2 from "../../../Components/assets/Patients2.svg";
+import { Link } from "react-router-dom";
+import { FiArrowRight, FiHeart, FiUserCheck } from "react-icons/fi";
+import { DashboardTopBar } from "../../../Components/common/CareShell";
+import { useAuth } from "../../../Context/AuthContext";
+import PatientForm from "../FormFillup/PatientForm";
 import Patient3 from "../../../Components/assets/Patients3.svg";
 import "./PatientDetailForm.css";
-import PatientForm from "../FormFillup/PatientForm";
+
+const patientLinks = [
+  { name: "Dashboard", href: "/patientdashboard" },
+  { name: "Care team", href: "/doctors" },
+  { name: "Appointments", href: "/patientappointment" },
+  { name: "Profile", href: "/patientdetailForm" },
+];
 
 const PatientDetailForm = () => {
+  const { signOutPatient } = useAuth();
+
   return (
-    <div>
-      <NavbarAll />
-      <div className="doctor-image">
-        <div className="container">
-          <div className="row">
-            <div className="col-sm">
-              <img
-                src={Patient1}
-                alt="doctorimg"
-                className="laptop-view-only"
-              />
-            </div>
-            <div className="col-sm">
-              <img
-                src={Patient2}
-                alt="doctorimg"
-                className="laptop-view-only"
-              />
-            </div>
-            <div className="col-sm">
-              <img src={Patient3} alt="doctorimg" />
-            </div>
+    <main className="care-patient-dashboard">
+      <DashboardTopBar
+        links={patientLinks}
+        activePath="/patientdetailForm"
+        onLogout={signOutPatient}
+        roleLabel="Mother"
+      />
+      <section className="care-dashboard-main patient-profile-setup">
+        <div className="care-page-header">
+          <div>
+            <span className="care-kicker">
+              <FiUserCheck /> Mother profile
+            </span>
+            <h1>Complete the care profile.</h1>
+            <p>
+              These details help the field worker understand trimester status,
+              location, and current concerns before logging checkup visits.
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Welcome Text section */}
-      <div className="patient-welcome">
-        <div className="welcome-section">
-          <h1>Welcome to PregBuddy, Patient🤰🏻</h1>
-          <p>
-            Thank You for choosing us and cooperating with us. We will try our
-            best to be at your services. Also we assure you, we have the best
-            and the most trusted Doctors with us.
-          </p>
-          <br />
-          <h5>Let's fill some details before moving on to the next step</h5>
+        <div className="care-grid care-grid--2">
+          <section className="care-panel">
+            <PatientForm />
+          </section>
+          <aside className="care-card care-card--media">
+            <img
+              className="care-card__media patient-profile-setup__image"
+              src={Patient3}
+              alt="Mother profile setup"
+            />
+            <div style={{ padding: 22 }}>
+              <div className="care-card__icon">
+                <FiHeart />
+              </div>
+              <h3>Built for continuity after the first registration</h3>
+              <p>
+                Once the profile is ready, the mother dashboard can show
+                appointments, reminders, and week-by-week milestone support.
+              </p>
+              <div style={{ marginTop: 18 }}>
+                <Link to="/patientdashboard" className="care-btn care-btn--primary">
+                  Open dashboard <FiArrowRight />
+                </Link>
+              </div>
+            </div>
+          </aside>
         </div>
-      </div>
-
-      <PatientForm />
-    </div>
+      </section>
+    </main>
   );
 };
 

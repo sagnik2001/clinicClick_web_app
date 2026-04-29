@@ -1,120 +1,60 @@
-.landing-section {
-  font-family: "Amaranth", sans-serif;
-  padding: 0px 25px;
-
+.ngo-landing__hero {
+  background-color: var(--care-navy);
 }
 
-.landing-section .container .col h1 {
-  font-size: 50px;
-  font-weight: 700;
-  color: white;
-  padding-top: 15%;
+.ngo-validation-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
 }
 
-
-
-.landing-button {
-  background-color: #845ec2 !important;
-  color: #fff;
-  font-size: 22px;
-  border-radius: 20px;
-  border: none;
-  width: 200px;
-  padding: 1%;
-  margin-top: 20px;
+.ngo-validation-list__item {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: start;
+  color: var(--care-ink);
+  font-weight: 800;
 }
 
-.services-section {
-  text-align: center;
-  margin-top: 90px;
-  padding: 10px;
-  font-family: "Amaranth", sans-serif;
+.ngo-validation-list__item svg {
+  color: var(--care-teal);
+  margin-top: 2px;
 }
 
-.services-section h1 {
-  font-size: 40px;
-  font-weight: 700;
-  color: white;
+.ngo-proof-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: var(--care-radius);
+  background:
+    linear-gradient(135deg, rgba(18, 49, 63, 0.96), rgba(15, 118, 110, 0.86)),
+    var(--care-navy);
+  color: #ffffff;
+  box-shadow: var(--care-shadow);
 }
 
-.services-section p {
-  color: rgb(115, 112, 112);
-  margin-bottom: 50px;
-}
-
-.services-cards {
-}
-
-.services-cards .card {
-  padding-top: 30px;
-  padding-bottom: 30px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 30%) !important;
-}
-
-.services-icon {
-  font-size: 40px;
-  color: #845ec2;
-}
-
-.services-cards .card-title {
-  font-size: 50px;
-  color: rgb(37, 36, 36);
+.ngo-proof-panel h2 {
+  margin: 14px 0 10px;
+  max-width: 760px;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  line-height: 0.98;
   font-weight: 900;
+  letter-spacing: 0;
 }
 
-@media screen and (max-width: 800px) {
-  .landing-section .container .col h1 {
-    padding-top: 10%;
-    font-size: 30px;
-  }
-
-  .landing-button {
-    font-size: 20px;
-    width: 160px;
-    margin-top: 13px;
-  }
-
-  .services-section h1 {
-    font-size: 28px;
-  }
-
-  .services-section p {
-    font-size: 15px;
-  }
+.ngo-proof-panel p {
+  max-width: 760px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
 }
 
-@media screen and (max-width: 800px) {
-  .landing-section {
-    margin-top: 0px;
-    display: flex;
+@media (max-width: 760px) {
+  .ngo-proof-panel {
+    align-items: flex-start;
     flex-direction: column;
-    text-align: center;
   }
-
-  .landing-button {
-    margin-bottom: 30px;
-  }
-
-  .landing-section .row {
-    display: block !important;
-  }
-
-  .services-section {
-    margin-top: 50px;
-  }
-
-  .services-cards .row {
-    display: block !important;
-  }
-
-  .services-cards .card {
-    margin-bottom: 30px;
-  }
-
-  .coloumn_cards {
-    display: flex;
-    justify-content: center;
-  }
-
 }

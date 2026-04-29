@@ -1,52 +1,56 @@
-import React from "react";
-import { useState, useEffect, useRef } from "react";
-import NavbarAll from "../../Components/Navbar/Navbar";
-import "../../Components/Chat/chat.css";
-import Conversations from "../../Components/Chat/Conversations/Conversations";
-
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { api_url } from "../../Urls/Api";
-import appli from "../../Database/Firebase";
-import { AiOutlineCamera } from "react-icons/ai";
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import {
-  collection,
-  query,
-  onSnapshot,
   addDoc,
-  Timestamp,
-  orderBy,
-  setDoc,
+  collection,
   doc,
   getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Moment from "react-moment";
+import { useLocation } from "react-router-dom";
+import { FiCamera, FiMessageCircle, FiSend, FiUsers } from "react-icons/fi";
+import { api_url } from "../../Urls/Api";
+import appli from "../../Database/Firebase";
+import { DashboardTopBar } from "../../Components/common/CareShell";
+import { EmptyState, SkeletonGrid } from "../../Components/common/LoadingStates";
+import { useAuth } from "../../Context/AuthContext";
+import Conversations from "../../Components/Chat/Conversations/Conversations";
+import "../../Components/Chat/chat.css";
+
+const patientLinks = [
+  { name: "Dashboard", href: "/patientdashboard" },
+  { name: "Care team", href: "/doctors" },
+  { name: "Appointments", href: "/patientappointment" },
+  { name: "Profile", href: "/patientdetailForm" },
+];
 
 const Chatting = () => {
   const [conversation, setConversation] = useState([]);
-
-  const token = window.localStorage.getItem("patientToken");
-  var docId;
-  if (token) {
-    docId = JSON.parse(atob(token.split(".")[1]));
-  }
-
-  console.log(docId, token);
-
-  const [chatStarted, setChatStarted] = useState(false); // A boolean state to check whether a user has initiated a chat
-  const [chatuser, setChatUser] = useState(""); // A state to have the name of the user whom the logged in user is chatting
-  const [chatpic, setChatpic] = useState(""); // A state to have the pic of the user whom the logged in user is chatting
-  const [chatid, setChatid] = useState(null); // A state to have the id of the user whom the logged in user is chatting
-  const [message, setmessage] = useState(""); // To contain the message sent by the user
-  const [convo, setconvo] = useState([]); // To hold the messages retrieved from database
-  const [lastmsg, setlastmsg] = useState([]); // Last Message
-
-  const [loading, setloading] = useState(false);
+  const [contactsLoading, setContactsLoading] = useState(true);
+  const [chatStarted, setChatStarted] = useState(false);
+  const [selectedPeer, setSelectedPeer] = useState(null);
+  const [chatid, setChatid] = useState(null);
+  const [message, setmessage] = useState("");
+  const [convo, setconvo] = useState([]);
   const [img, setImg] = useState("");
   const [previmg, setprevImg] = useState("");
+  const scrollRef = useRef();
+  const unsubscribeRef = useRef(null);
   const db = appli.firestore();
   const storage = appli.storage();
+  const location = useLocation();
+  const { signOutPatient } = useAuth();
+
+  const token = window.localStorage.getItem("patientToken");
+  const docId = token ? JSON.parse(atob(token.split(".")[1])) : null;
+  const currentUserId = docId?.patientid;
 
   const handleImage = (e) => {
     if (e.target.files.length !== 0) {
@@ -56,80 +60,66 @@ const Chatting = () => {
   };
 
   const initChat = async (user) => {
-    setloading(false);
+    const userId = user?._id || user;
     setChatStarted(true);
-    console.log(user);
-    setChatid(user);
-    const user_uid_2 = docId?.patientid;
-    const user_uid_1 = user;
-    const id = user_uid_1 + `$` + user_uid_2; // Creating a chat id for the chat room between 2 users docId
+    setSelectedPeer(user);
+    setChatid(userId);
 
-    // Storing the chats in the db
-    const msgsRef = collection(db, "messages", id, "chat");
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+    }
+
+    const roomId = `${userId}$${currentUserId}`;
+    const msgsRef = collection(db, "messages", roomId, "chat");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
 
-    onSnapshot(q, (querySnapshot) => {
-      let msgs = [];
-      querySnapshot.forEach((doc) => {
-        msgs.push(doc.data());
+    unsubscribeRef.current = onSnapshot(q, (querySnapshot) => {
+      const msgs = [];
+      querySnapshot.forEach((snapDoc) => {
+        msgs.push(snapDoc.data());
       });
-      setconvo(msgs); // Retrieving the messages between two particular users in same chat id
+      setconvo(msgs);
     });
-    // Last Messages
-    const docSnap = await getDoc(doc(db, "lastmsg", id));
-    // if last message exists and message is from selected user
-    if (docSnap.data() && docSnap.data().from !== user_uid_1) {
-      // update last message doc, set unread to false
-      await updateDoc(doc(db, "lastmsg", id), { unread: false });
+
+    const docSnap = await getDoc(doc(db, "lastmsg", roomId));
+    if (docSnap.data() && docSnap.data().from !== userId) {
+      await updateDoc(doc(db, "lastmsg", roomId), { unread: false });
     }
   };
-
-  console.log(convo);
-  const scrollRef = useRef();
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [convo]);
 
-  // On Sending a Message to a user
+  useEffect(() => () => unsubscribeRef.current?.(), []);
+
   const messageHandler = async (e) => {
     e.preventDefault();
-    console.log(chatid, docId);
-    if (message || img) {
-      const user_uid_2 = docId?.patientid;
-      const user_uid_1 = chatid;
-      const id = user_uid_1 + `$` + user_uid_2; // Creating a chat id for the chat room between 2 users docId
+    if (!message && !img) return;
 
-      console.log(id);
-      // If a user sends an image
-      let url;
-      if (img) {
-        const imgRef = ref(
-          storage, // Storing the image url in firebase storage
-          `images/${new Date().getTime()} - ${img.name}`,
-        );
-        const snap = await uploadBytes(imgRef, img);
-        const dlUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
-        url = dlUrl;
-      }
+    const roomId = `${chatid}$${currentUserId}`;
+    let url;
 
-      // Firestore database
-      await addDoc(collection(db, "messages", id, "chat"), {
-        message,
-        from: user_uid_2,
-        to: user_uid_1,
-        createdAt: Timestamp.fromDate(new Date()),
-        media: url || "",
-      });
-      await setDoc(doc(db, "lastmsg", id), {
-        message,
-        from: user_uid_2,
-        to: user_uid_1,
-        createdAt: Timestamp.fromDate(new Date()),
-        media: url || "",
-        unread: true,
-      });
+    if (img) {
+      const imgRef = ref(storage, `images/${new Date().getTime()} - ${img.name}`);
+      const snap = await uploadBytes(imgRef, img);
+      url = await getDownloadURL(ref(storage, snap.ref.fullPath));
     }
+
+    const payload = {
+      message,
+      from: currentUserId,
+      to: chatid,
+      createdAt: Timestamp.fromDate(new Date()),
+      media: url || "",
+    };
+
+    await addDoc(collection(db, "messages", roomId, "chat"), payload);
+    await setDoc(doc(db, "lastmsg", roomId), {
+      ...payload,
+      unread: true,
+    });
+
     setmessage("");
     setImg("");
     setprevImg("");
@@ -143,152 +133,154 @@ const Chatting = () => {
         },
       })
       .then((res) => {
-        console.log(res);
-        setConversation(res.data);
+        setConversation(Array.isArray(res.data) ? res.data : []);
       })
       .catch((err) => {
         console.log(err);
-      });
-  }, []);
+      })
+      .finally(() => setContactsLoading(false));
+  }, [token]);
 
   return (
-    <div>
-      <NavbarAll />
-      <div className="messenger">
-        <div className="chatMenu">
-          <div className="chatMenuWrapper" style={{ textAlign: "center" }}>
-            <input
-              placeholder="Search for patients"
-              className="chatMenuInput"
-            />
-            {conversation?.map((c) => (
-              <Conversations conversation={c} onClick={initChat} />
-            ))}
+    <main className="care-patient-dashboard">
+      <DashboardTopBar
+        links={patientLinks}
+        activePath={location.pathname}
+        onLogout={signOutPatient}
+        roleLabel="Mother"
+      />
+      <section className="care-dashboard-main">
+        <section className="care-page-header">
+          <div>
+            <span className="care-kicker">
+              <FiMessageCircle /> Care chat
+            </span>
+            <h1>Care team messages</h1>
+            <p>Message subscribed doctors and health workers from one place.</p>
           </div>
-        </div>
-        <div className="chatBox">
-          <div className="chatMenuWrapper">
-            {chatStarted && (
-              <>
-                <div className="chatBoxTop">
-                  <>
-                    {" "}
-                    {convo?.map((con) => (
-                      <div
-                        style={{
-                          marginTop: "2vh",
-                          textAlign:
-                            con.from == docId?.patientid ? "right" : "left",
-                        }}
-                        ref={scrollRef}
-                      >
-                        {con?.media && (
-                          <p
-                            className={
-                              con.from == docId?.patientid
-                                ? "messageStyle1"
-                                : "messageStyle"
-                            }
-                          >
-                            {con.media ? (
-                              <img
-                                src={con.media}
-                                alt={con.message}
-                                width="120"
-                                height="131"
-                                style={{
-                                  textAlign: "center",
-                                  filter:
-                                    "drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.161))",
-                                }}
-                              />
-                            ) : null}
-                          </p>
-                        )}
-                        {con?.message && (
-                          <p
-                            className={
-                              con.from == docId?.patientid
-                                ? "messageStyle1"
-                                : "messageStyle"
-                            }
-                          >
-                            {con.message}
-                          </p>
-                        )}
-                        <br />
-                        <small
-                          className={
-                            con.from == docId?.patientid ? "date1" : "date"
-                          }
-                        >
-                          <Moment fromNow>{con.createdAt.toDate()}</Moment>
-                        </small>
-                      </div>
-                    ))}
-                  </>
-                </div>
-                <div className="chatBoxBottom">
-                  <form
-                    style={{
-                      display: "flex",
-                      width: "100%",
-                      alignItems: "center",
-                    }}
-                    onSubmit={messageHandler}
-                  >
-                    <div style={{ marginLeft: "2vw" }}>
-                      <label htmlFor="img">
-                        {previmg ? (
-                          <img
-                            src={previmg}
-                            alt="dummy"
-                            width="49"
-                            height="51
-          "
-                            style={{
-                              borderRadius: "75px",
+        </section>
 
-                              filter:
-                                "drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.161))",
-                            }}
-                          />
+        <div className="messenger care-chat-shell">
+          <aside className="chatMenu care-chat-sidebar">
+            <div className="care-chat-sidebar__header">
+              <span className="care-pill">
+                <FiUsers /> Care team
+              </span>
+              <h2>Available contacts</h2>
+            </div>
+            <div className="care-chat-list">
+              {contactsLoading ? (
+                <SkeletonGrid count={3} />
+              ) : conversation.length > 0 ? (
+                conversation.map((contact) => (
+                  <Conversations
+                    conversation={contact}
+                    active={chatid === contact?._id}
+                    onClick={initChat}
+                    key={contact?._id}
+                  />
+                ))
+              ) : (
+                <EmptyState
+                  title="No care contacts"
+                  message="Subscribed care providers will appear here."
+                />
+              )}
+            </div>
+          </aside>
+
+          <section className="chatBox care-chat-panel">
+            <div className="care-chat-panel__inner">
+              {chatStarted ? (
+                <>
+                  <div className="care-chat-panel__header">
+                    <span className="care-chat-contact__avatar care-chat-contact__avatar--large">
+                      {selectedPeer?.name?.charAt(0)?.toUpperCase() || "D"}
+                    </span>
+                    <div>
+                      <h2>{selectedPeer?.name || "Care provider"}</h2>
+                      <p>{selectedPeer?.hospital || selectedPeer?.email || "Care conversation"}</p>
+                    </div>
+                  </div>
+
+                  <div className="chatBoxTop care-chat-messages">
+                    {convo.map((item, index) => {
+                      const isMine = item.from === currentUserId;
+                      return (
+                        <div
+                          className={`care-chat-message-row ${
+                            isMine ? "care-chat-message-row--mine" : ""
+                          }`}
+                          ref={scrollRef}
+                          key={`${item.createdAt?.seconds || index}-${index}`}
+                        >
+                          {item?.media && (
+                            <p
+                              className={`care-chat-bubble ${
+                                isMine ? "care-chat-bubble--mine" : ""
+                              }`}
+                            >
+                              <img src={item.media} alt={item.message || "Attachment"} />
+                            </p>
+                          )}
+                          {item?.message && (
+                            <p
+                              className={`care-chat-bubble ${
+                                isMine ? "care-chat-bubble--mine" : ""
+                              }`}
+                            >
+                              {item.message}
+                            </p>
+                          )}
+                          <small className="care-chat-date">
+                            {item.createdAt?.toDate ? (
+                              <Moment fromNow>{item.createdAt.toDate()}</Moment>
+                            ) : null}
+                          </small>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="chatBoxBottom care-chat-composer">
+                    <form onSubmit={messageHandler}>
+                      <label htmlFor="patient-chat-img" className="care-chat-upload">
+                        {previmg ? (
+                          <img src={previmg} alt="Selected attachment preview" />
                         ) : (
-                          <AiOutlineCamera />
+                          <FiCamera />
                         )}
                       </label>
-
                       <input
-                        onChange={(e) => handleImage(e)}
+                        onChange={handleImage}
                         type="file"
-                        id="img"
+                        id="patient-chat-img"
                         accept="image/*"
                         style={{ display: "none" }}
                       />
-                    </div>
-                    <textarea
-                      className=" chatMessageInput"
-                      type="text"
-                      style={{
-                        width: "100%",
-                        textDecoration: "auto",
-                        border: "#55A039",
-                      }}
-                      value={message}
-                      onChange={(e) => setmessage(e.target.value)}
-                      placeholder="Start typing....."
-                    ></textarea>
-                    <button className="chatSubmitButton">Send</button>
-                  </form>
-                </div>
-              </>
-            )}
-            {/*
-             */}
-          </div>
+                      <textarea
+                        className="chatMessageInput"
+                        value={message}
+                        onChange={(e) => setmessage(e.target.value)}
+                        placeholder="Write a message..."
+                      />
+                      <button className="chatSubmitButton" type="submit">
+                        <FiSend /> Send
+                      </button>
+                    </form>
+                  </div>
+                </>
+              ) : (
+                <EmptyState
+                  title="Select a contact to start chatting"
+                  message="Choose a care provider from the left panel to open the conversation thread."
+                />
+              )}
+            </div>
+          </section>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

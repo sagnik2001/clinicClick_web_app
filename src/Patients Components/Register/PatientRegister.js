@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./PatientRegister.css";
 import { Link } from "react-router-dom";
 import image1 from "../../Components/assets/Patient_register.svg";
+import { PublicNav } from "../../Components/common/CareShell";
 import { Icon } from "react-icons-kit";
 import { eye } from "react-icons-kit/feather/eye";
 import { eyeOff } from "react-icons-kit/feather/eyeOff";
@@ -103,16 +104,22 @@ const PatientRegister = () => {
   };
 
   return (
-    <div className="register">
+    <main className="care-auth-page">
+      <PublicNav />
+      <section className="care-legacy-auth">
       <div className="register-box">
         <div className="register-row">
           <div className="register-col1">
-            <img src={image1} className="register-img" />
-            <h1 className="doctor-text">Welcome Patients</h1>
+            <img src={image1} className="register-img" alt="Mother registration" />
+            <h1 className="doctor-text">Mother care access</h1>
+            <p className="care-auth-card__copy" style={{ color: "rgba(255,255,255,0.82)", textAlign: "center" }}>
+              Create the mother-facing account for appointments, trimester
+              details, and week-by-week milestone updates.
+            </p>
           </div>
           <div className="register-col2">
             <div className="register-form-part">
-              <h1>Let's Get Started</h1>
+              <h1>Create mother account</h1>
               <form className="register-form" onSubmit={handleSubmit}>
                 <input
                   placeholder="Name"
@@ -124,7 +131,7 @@ const PatientRegister = () => {
                     setnameFormError(false);
                     setformError(false);
                   }}
-                  autocomplete="off"
+                  autoComplete="off"
                 />
                 {nameFormError && (
                   <Alert
@@ -147,7 +154,7 @@ const PatientRegister = () => {
                     setemailFormError(false);
                     setformError(false);
                   }}
-                  autocomplete="off"
+                  autoComplete="off"
                 />
                 {emailFormError && (
                   <Alert
@@ -277,7 +284,8 @@ const PatientRegister = () => {
           </div>
         </div>
       </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import image3 from "../assets/Forget_pass.svg";
+import { PublicNav } from "../common/CareShell";
 import "./forgetPass.css";
 import { Icon } from "react-icons-kit";
 import { eye } from "react-icons-kit/feather/eye";
@@ -21,11 +22,14 @@ const ResetPass = () => {
   };
 
   return (
-    <div className="register">
+    <main className="care-auth-page">
+      <PublicNav />
+      <section className="care-legacy-auth">
       <div className="register-box">
         <div className="register-row">
           <div className="register-col1">
-            <img src={image3} className="login-img" />
+            <img src={image3} className="login-img" alt="Reset password" />
+            <h1 className="doctor-text">Create a new password</h1>
           </div>
           <div className="register-col2">
             <div className="register-form-part">
@@ -57,7 +61,8 @@ const ResetPass = () => {
           </div>
         </div>
       </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
